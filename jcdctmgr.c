@@ -623,6 +623,17 @@ jinit_forward_dct(j_compress_ptr cinfo)
   my_fdct_ptr fdct;
   int i;
 
+#ifndef DCT_XLA_SUPPORTED
+	if(cinfo->dct_xla_enabled) {
+		fprintf(stderr, "XLA is not supported.\n");
+		exit(EXIT_FAILURE);
+	}
+#endif
+	if(cinfo->dct_xla_enabled && cinfo->dct_method != JDCT_FLOAT) {
+		fprintf(stderr, "XLA is currently only supported for float dct\n");
+		exit(EXIT_FAILURE);
+	}
+
   fdct = (my_fdct_ptr)
     (*cinfo->mem->alloc_small) ((j_common_ptr)cinfo, JPOOL_IMAGE,
                                 sizeof(my_fdct_controller));
@@ -652,7 +663,9 @@ jinit_forward_dct(j_compress_ptr cinfo)
 #ifdef DCT_FLOAT_SUPPORTED
   case JDCT_FLOAT:
     fdct->pub.forward_DCT = forward_DCT_float;
-    if (jsimd_can_fdct_float())
+		if (cinfo->dct_xla_enabled)
+			fdct->float_dct = jpeg_fdct_xla;
+		else if (jsimd_can_fdct_float())
       fdct->float_dct = jsimd_fdct_float;
     else
       fdct->float_dct = jpeg_fdct_float;
