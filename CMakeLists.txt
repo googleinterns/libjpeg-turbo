@@ -294,6 +294,7 @@ message(STATUS "libjpeg API shared library version = ${SO_MAJOR_VERSION}.${SO_AG
 set(TURBOJPEG_SO_MAJOR_VERSION 0)
 set(TURBOJPEG_SO_VERSION 0.2.0)
 
+
 ###############################################################################
 # COMPILER SETTINGS
 ###############################################################################
@@ -543,8 +544,8 @@ else()
 endif()
 
 if(DCT_XLA)
-	add_definitions(-DDCT_XLA_SUPPORTED)
-	add_subdirectory(xla)
+  add_definitions(-DDCT_XLA_SUPPORTED)
+  add_subdirectory(xla)
 else()
   add_library(xla OBJECT xla_none.c)
 endif()

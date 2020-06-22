@@ -16,5 +16,5 @@
 GLOBAL(void)
 jpeg_fdct_xla(FAST_FLOAT *data)
 {
-	return 0;
+  return 0;
 }

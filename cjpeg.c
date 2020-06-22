@@ -290,9 +290,9 @@ parse_switches(j_compress_ptr cinfo, int argc, char **argv,
       } else
         usage();
 
-		} else if (keymatch(arg, "xla", 1)) {
-			cinfo->dct_xla_enabled = TRUE;
-		}	else if (keymatch(arg, "debug", 1) || keymatch(arg, "verbose", 1)) {
+    } else if (keymatch(arg, "xla", 1)) {
+      cinfo->dct_xla_enabled = TRUE;
+    }  else if (keymatch(arg, "debug", 1) || keymatch(arg, "verbose", 1)) {
       /* Enable debug printouts. */
       /* On first -d, print version identification */
       static boolean printed_version = FALSE;

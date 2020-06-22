@@ -373,7 +373,7 @@ struct jpeg_compress_struct {
 #endif
   int smoothing_factor;         /* 1..100, or 0 for no input smoothing */
   J_DCT_METHOD dct_method;      /* DCT algorithm selector */
-	boolean dct_xla_enabled;
+  boolean dct_xla_enabled;
 
   /* The restart interval can be specified in absolute MCUs by setting
    * restart_interval, or in MCU rows by setting restart_in_rows
