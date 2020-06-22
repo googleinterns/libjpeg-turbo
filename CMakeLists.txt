@@ -294,9 +294,6 @@ message(STATUS "libjpeg API shared library version = ${SO_MAJOR_VERSION}.${SO_AG
 set(TURBOJPEG_SO_MAJOR_VERSION 0)
 set(TURBOJPEG_SO_VERSION 0.2.0)
 
-# XLA
-set(DCT_XLA ON)
-
 ###############################################################################
 # COMPILER SETTINGS
 ###############################################################################
