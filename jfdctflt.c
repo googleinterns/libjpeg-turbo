@@ -59,6 +59,7 @@
 GLOBAL(void)
 jpeg_fdct_float(FAST_FLOAT *data)
 {
+	fprintf(stderr, "In regular non-simd float dct\n");
   FAST_FLOAT tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
   FAST_FLOAT tmp10, tmp11, tmp12, tmp13;
   FAST_FLOAT z1, z2, z3, z4, z5, z11, z13;
