@@ -190,6 +190,9 @@ usage(void)
   fprintf(stderr, "  -dct float     Use floating-point DCT method%s\n",
           (JDCT_DEFAULT == JDCT_FLOAT ? " (default)" : ""));
 #endif
+#ifdef DCT_XLA_SUPPORTED
+  fprintf(stderr, "  -xla     Use xla for dct.\n");
+#endif
   fprintf(stderr, "  -icc FILE      Embed ICC profile contained in FILE\n");
   fprintf(stderr, "  -restart N     Set restart interval in rows, or in blocks with B\n");
 #ifdef INPUT_SMOOTHING_SUPPORTED
@@ -287,7 +290,9 @@ parse_switches(j_compress_ptr cinfo, int argc, char **argv,
       } else
         usage();
 
-    } else if (keymatch(arg, "debug", 1) || keymatch(arg, "verbose", 1)) {
+    } else if (keymatch(arg, "xla", 1)) {
+      cinfo->dct_xla_enabled = TRUE;
+    }  else if (keymatch(arg, "debug", 1) || keymatch(arg, "verbose", 1)) {
       /* Enable debug printouts. */
       /* On first -d, print version identification */
       static boolean printed_version = FALSE;
