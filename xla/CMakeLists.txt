@@ -5,7 +5,7 @@ add_library(normal-dct OBJECT ../jfdctflt.c)
 set_property(TARGET normal-dct PROPERTY COMPILE_FLAGS "-DDCT_FLOAT_SUPPORTED")
 
 add_executable(dctunittest dctunittest.c $<TARGET_OBJECTS:normal-dct> $<TARGET_OBJECTS:xla>)
-set_property(TARGET dctunittest PROPERTY COMPILE_FLAGS "-DERROR_MARGIN=0.0000001")
+set_property(TARGET dctunittest PROPERTY COMPILE_FLAGS "-DREL_ERROR_MARGIN=0.001 -DTEST_COUNT=10")
 add_test(basic_dctunittest ./dctunittest)
 
 # Needed for logging in shared library.
