@@ -93,6 +93,7 @@ typedef FAST_FLOAT FLOAT_MULT_TYPE;  /* preferred floating type */
 EXTERN(void) jpeg_fdct_islow(DCTELEM *data);
 EXTERN(void) jpeg_fdct_ifast(DCTELEM *data);
 EXTERN(void) jpeg_fdct_float(FAST_FLOAT *data);
+EXTERN(void) jpeg_fdct_xla(FAST_FLOAT *data);
 
 EXTERN(void) jpeg_idct_islow(j_decompress_ptr cinfo,
                              jpeg_component_info *compptr, JCOEFPTR coef_block,
