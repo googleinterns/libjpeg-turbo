@@ -12,6 +12,18 @@
 #include "jdct.h"
 
 GLOBAL(void)
+initialize_tf_session()
+{
+
+}
+
+GLOBAL(void)
+destroy_tf_session()
+{
+
+}
+
+GLOBAL(void)
 jpeg_fdct_xla(FAST_FLOAT *data)
 {
 

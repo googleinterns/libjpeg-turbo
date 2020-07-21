@@ -560,7 +560,8 @@ endif()
 
 if(ENABLE_STATIC)
   add_library(jpeg-static STATIC ${JPEG_SOURCES} $<TARGET_OBJECTS:simd>
-    ${SIMD_OBJS} $<TARGET_OBJECTS:xla>)
+    ${SIMD_OBJS})
+  target_link_libraries(jpeg-static xla)
   if(NOT MSVC)
     set_target_properties(jpeg-static PROPERTIES OUTPUT_NAME jpeg)
   endif()
@@ -568,7 +569,7 @@ endif()
 
 if(WITH_TURBOJPEG)
   if(ENABLE_SHARED)
-    set(TURBOJPEG_SOURCES ${JPEG_SOURCES} $<TARGET_OBJECTS:simd> ${SIMD_OBJS} $<TARGET_OBJECTS:xla>
+    set(TURBOJPEG_SOURCES ${JPEG_SOURCES} $<TARGET_OBJECTS:simd> ${SIMD_OBJS}
       turbojpeg.c transupp.c jdatadst-tj.c jdatasrc-tj.c rdbmp.c rdppm.c
       wrbmp.c wrppm.c)
     set(TJMAPFILE ${CMAKE_CURRENT_SOURCE_DIR}/turbojpeg-mapfile)
@@ -578,6 +579,7 @@ if(WITH_TURBOJPEG)
       set(TJMAPFILE ${CMAKE_CURRENT_SOURCE_DIR}/turbojpeg-mapfile.jni)
     endif()
     add_library(turbojpeg SHARED ${TURBOJPEG_SOURCES})
+    target_link_libraries(turbojpeg xla)
     set_property(TARGET turbojpeg PROPERTY COMPILE_FLAGS
       "-DBMP_SUPPORTED -DPPM_SUPPORTED")
     if(WIN32)
@@ -615,8 +617,9 @@ if(WITH_TURBOJPEG)
 
   if(ENABLE_STATIC)
     add_library(turbojpeg-static STATIC ${JPEG_SOURCES} $<TARGET_OBJECTS:simd>
-      ${SIMD_OBJS} $<TARGET_OBJECTS:xla> turbojpeg.c transupp.c jdatadst-tj.c 
+      ${SIMD_OBJS} turbojpeg.c transupp.c jdatadst-tj.c
       jdatasrc-tj.c rdbmp.c rdppm.c wrbmp.c wrppm.c)
+    target_link_libraries(turbojpeg-static xla)
     set_property(TARGET turbojpeg-static PROPERTY COMPILE_FLAGS
       "-DBMP_SUPPORTED -DPPM_SUPPORTED")
     if(NOT MSVC)
