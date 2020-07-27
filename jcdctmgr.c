@@ -324,34 +324,47 @@ start_pass_fdctmgr(j_compress_ptr cinfo)
 #ifdef DCT_FLOAT_SUPPORTED
     case JDCT_FLOAT:
       {
-        /* For float AA&N IDCT method, divisors are equal to quantization
-         * coefficients scaled by scalefactor[row]*scalefactor[col], where
-         *   scalefactor[0] = 1
-         *   scalefactor[k] = cos(k*PI/16) * sqrt(2)    for k=1..7
-         * We apply a further scale factor of 8.
-         * What's actually stored is 1/divisor so that the inner loop can
-         * use a multiplication rather than a division.
-         */
         FAST_FLOAT *fdtbl;
-        int row, col;
-        static const double aanscalefactor[DCTSIZE] = {
-          1.0, 1.387039845, 1.306562965, 1.175875602,
-          1.0, 0.785694958, 0.541196100, 0.275899379
-        };
-
         if (fdct->float_divisors[qtblno] == NULL) {
           fdct->float_divisors[qtblno] = (FAST_FLOAT *)
             (*cinfo->mem->alloc_small) ((j_common_ptr)cinfo, JPOOL_IMAGE,
                                         DCTSIZE2 * sizeof(FAST_FLOAT));
         }
         fdtbl = fdct->float_divisors[qtblno];
-        i = 0;
-        for (row = 0; row < DCTSIZE; row++) {
-          for (col = 0; col < DCTSIZE; col++) {
-            fdtbl[i] = (FAST_FLOAT)
-              (1.0 / (((double)qtbl->quantval[i] *
-                       aanscalefactor[row] * aanscalefactor[col] * 8.0)));
-            i++;
+
+        if(cinfo->dct_xla_enabled) {
+          /* Scaling is not necessary if dct is run with tensorflow/xla */
+          int i, row, col;
+          i = 0;
+          for (row = 0; row < DCTSIZE; row++) {
+            for (col = 0; col < DCTSIZE; col++) {
+              fdtbl[i] = (FAST_FLOAT)(1.0 / ((double)qtbl->quantval[i]));
+              i++;
+            }
+          }
+        } else {
+          /* For float AA&N IDCT method, divisors are equal to quantization
+           * coefficients scaled by scalefactor[row]*scalefactor[col], where
+           *   scalefactor[0] = 1
+           *   scalefactor[k] = cos(k*PI/16) * sqrt(2)    for k=1..7
+           * We apply a further scale factor of 8.
+           * What's actually stored is 1/divisor so that the inner loop can
+           * use a multiplication rather than a division.
+           */
+          int row, col;
+          static const double aanscalefactor[DCTSIZE] = {
+            1.0, 1.387039845, 1.306562965, 1.175875602,
+            1.0, 0.785694958, 0.541196100, 0.275899379
+          };
+
+          i = 0;
+          for (row = 0; row < DCTSIZE; row++) {
+            for (col = 0; col < DCTSIZE; col++) {
+              fdtbl[i] = (FAST_FLOAT)
+                (1.0 / (((double)qtbl->quantval[i] *
+                         aanscalefactor[row] * aanscalefactor[col] * 8.0)));
+              i++;
+            }
           }
         }
       }
@@ -629,9 +642,13 @@ jinit_forward_dct(j_compress_ptr cinfo)
     exit(EXIT_FAILURE);
   }
 #endif
-  if(cinfo->dct_xla_enabled && cinfo->dct_method != JDCT_FLOAT) {
-    fprintf(stderr, "XLA is currently only supported for float dct\n");
-    exit(EXIT_FAILURE);
+  if(cinfo->dct_xla_enabled) {
+    if(cinfo->dct_method != JDCT_FLOAT) {
+      fprintf(stderr, "XLA is currently only supported for float dct\n");
+      exit(EXIT_FAILURE);
+    }
+    /* Tensorflow session that runs dct */
+    initialize_tf_session();
   }
 
   fdct = (my_fdct_ptr)
