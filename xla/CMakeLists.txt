@@ -14,7 +14,7 @@ set_property(TARGET normal-dct PROPERTY COMPILE_FLAGS "-DDCT_FLOAT_SUPPORTED")
 
 add_executable(dctunittest dctunittest.c $<TARGET_OBJECTS:normal-dct>)
 target_link_libraries(dctunittest xla)
-set_property(TARGET dctunittest PROPERTY COMPILE_FLAGS "-DREL_ERROR_MARGIN=0.001 -DTEST_COUNT=10 -DRAND_SEED=19191919")
+set_property(TARGET dctunittest PROPERTY COMPILE_FLAGS "-DREL_ERROR_MARGIN=0.1 -DBLOCK_COUNT=10000 -DRAND_SEED=19191919")
 add_test(basic_dctunittest ./dctunittest)
 
 # Needed for logging in shared library.

@@ -41,7 +41,8 @@ T = tf.compat.v1.constant(
 Tinv = tf.compat.v1.transpose(T)
 
 x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[8, 8], name="x")
-y = tf.compat.v1.matmul(tf.compat.v1.matmul(T, x), Tinv, name="y")
+inter = tf.compat.v1.linalg.matmul(T, x, name="inter")
+y = tf.compat.v1.linalg.matmul(inter, Tinv, name="y")
 
 # save the graph
 tf.compat.v1.train.write_graph(graph_or_graph_def = sess.graph_def,

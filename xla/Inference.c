@@ -75,7 +75,7 @@ Inference* newInference(
 {
   Inference* obj = malloc(sizeof(Inference));
   // init the 'trival' members
-  TF_Status* status = TF_NewStatus();
+  obj->status = TF_NewStatus();
   obj->graph = TF_NewGraph();
 
   // create a bunch of objects we need to init graph and session
@@ -84,11 +84,11 @@ Inference* newInference(
   TF_SessionOptions* session_opts = TF_NewSessionOptions();
 
   // import graph
-  TF_GraphImportGraphDef(obj->graph, graph_def, opts, status);
-  AssertOk(status);
+  TF_GraphImportGraphDef(obj->graph, graph_def, opts, obj->status);
+  AssertOk(obj->status);
   // and create session
-  obj->session = TF_NewSession(obj->graph, session_opts, status);
-  AssertOk(status);
+  obj->session = TF_NewSession(obj->graph, session_opts, obj->status);
+  AssertOk(obj->status);
 
   // prepare the constants for inference
   // input
@@ -104,7 +104,6 @@ Inference* newInference(
   TF_DeleteImportGraphDefOptions(opts);
   TF_DeleteSessionOptions(session_opts);
 
-  TF_DeleteStatus(status);
   return obj;
 }
 
@@ -122,15 +121,12 @@ void destroy(Inference* inf)
 
 TF_Tensor* runGraph(const Inference* inf, TF_Tensor* input_tensor)
 {
-  TF_Status* status = TF_NewStatus();
   TF_Tensor* output_tensor;
   TF_SessionRun(inf->session, NULL,
                 inf->input,  &input_tensor,  1,
                 inf->output, &output_tensor, 1,
                 &inf->output_op, 1,
-                NULL, status);
-  AssertOk(status);
-  TF_DeleteStatus(status);
+                NULL, inf->status);
 
   return output_tensor;
 }

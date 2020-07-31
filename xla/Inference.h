@@ -6,7 +6,8 @@ typedef struct Inference {
   TF_Output* input;
   TF_Operation* output_op;
   TF_Output* output;
-
+  TF_Status* status;
+  TF_Tensor* output_tensor;
 } Inference;
 
 /**
