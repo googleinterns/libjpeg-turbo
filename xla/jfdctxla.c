@@ -29,14 +29,16 @@
 Inference* inf;
 TF_Tensor* in;
 FAST_FLOAT* in_data;
-int byte_size = DCTSIZE * DCTSIZE * sizeof(FAST_FLOAT);
-int64_t dims[] = {DCTSIZE, DCTSIZE};
+int byte_size;
+int64_t dims[] = {0, DCTSIZE, DCTSIZE};
 
 GLOBAL(void)
-initialize_tf_session()
+initialize_tf_session(int saiz)
 {
+  byte_size = saiz * DCTSIZE * DCTSIZE * sizeof(FAST_FLOAT);
+  dims[0] = saiz;
   inf = newInference(PB_BINARY_PATH, "x", "y");
-  in = TF_AllocateTensor(TF_FLOAT, dims, 2, byte_size);
+  in = TF_AllocateTensor(TF_FLOAT, dims, 3, byte_size);
   in_data = (FAST_FLOAT*)(TF_TensorData(in));
 }
 
@@ -48,6 +50,15 @@ destroy_tf_session()
 
 GLOBAL(void)
 jpeg_fdct_xla(FAST_FLOAT *data)
+{
+  memcpy(in_data, data, byte_size);
+  TF_Tensor* out = runGraph(inf, in);
+  FAST_FLOAT* out_data = (FAST_FLOAT*)(TF_TensorData(out));
+  memcpy(data, out_data, byte_size);
+}
+
+GLOBAL(void)
+jpeg_fdct_xla_block(FAST_FLOAT data[][DCTSIZE * DCTSIZE])
 {
   memcpy(in_data, data, byte_size);
   TF_Tensor* out = runGraph(inf, in);

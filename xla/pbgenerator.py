@@ -2,10 +2,15 @@
 # block. It's written into a binary file called tfdct.pb
 import os
 import tensorflow as tf
+import sys
 
-path = os.getcwd()
+path = os.path.dirname(os.path.realpath(__file__))
 tf.compat.v1.disable_eager_execution()
 sess=tf.compat.v1.InteractiveSession()
+if len(sys.argv) != 2:
+  matrixCount = 1
+else:
+  matrixCount = int(sys.argv[1])
 
 # Suppose we have an 8x8 matrix x, and we want to calculate its discrete cosine
 # transform y. We can use the following formula:
@@ -40,12 +45,15 @@ T = tf.compat.v1.constant(
 
 Tinv = tf.compat.v1.transpose(T)
 
-x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[8, 8], name="x")
-y = tf.compat.v1.matmul(tf.compat.v1.matmul(T, x), Tinv, name="y")
+broadT = tf.compat.v1.broadcast_to(T, [matrixCount, 8, 8])
+broadTinv = tf.compat.v1.broadcast_to(Tinv, [matrixCount, 8, 8])
+x = tf.compat.v1.placeholder(dtype=tf.float32, shape=[matrixCount, 8, 8], name="x")
+inter = tf.compat.v1.linalg.matmul(broadT, x, name="inter")
+y = tf.compat.v1.linalg.matmul(inter, broadTinv, name="y")
 
 # save the graph
 tf.compat.v1.train.write_graph(graph_or_graph_def = sess.graph_def,
                                logdir = path,
-                               name = "tfdct.pb",
+                               name = "{}/tfdct.pb".format(path),
                                as_text = False)
 

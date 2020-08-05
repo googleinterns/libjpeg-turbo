@@ -648,7 +648,7 @@ jinit_forward_dct(j_compress_ptr cinfo)
       exit(EXIT_FAILURE);
     }
     /* Tensorflow session that runs dct */
-    initialize_tf_session();
+    initialize_tf_session(0);
   }
 
   fdct = (my_fdct_ptr)

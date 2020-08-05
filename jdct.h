@@ -96,7 +96,7 @@ EXTERN(void) jpeg_fdct_float(FAST_FLOAT *data);
 
 /* Declarations for tensorflow/xla dct */
 EXTERN(void) jpeg_fdct_xla(FAST_FLOAT *data);
-EXTERN(void) initialize_tf_session();
+EXTERN(void) initialize_tf_session(int);
 EXTERN(void) destroy_tf_session();
 
 EXTERN(void) jpeg_idct_islow(j_decompress_ptr cinfo,

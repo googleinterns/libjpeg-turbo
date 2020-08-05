@@ -12,7 +12,7 @@
 #include "jdct.h"
 
 GLOBAL(void)
-initialize_tf_session()
+initialize_tf_session(int x)
 {
 
 }
